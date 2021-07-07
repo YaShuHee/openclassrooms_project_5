@@ -1,6 +1,7 @@
+/* Constants */
 const apiUrl = "http://localhost:8000/api/v1/"
 
-
+/* Classes */
 class FilmDiv {
     constructor(parent, object) {
         console.log("Création d'un FilmDiv.");
@@ -86,7 +87,14 @@ class FilmDiv {
 }
 
 
-function getFilmJson(filmId) {
+/* Functions */
+function removeAllChildren(parent) {
+    while (parent.lastChild) {
+        parent.removeChild(parent.lastChild);
+    }
+}
+
+function updateFilmDiv(filmId) {
     let parent = document.getElementById("film-container");
 
     fetch(`${apiUrl}titles/${filmId}`)
@@ -94,17 +102,27 @@ function getFilmJson(filmId) {
             if (response.ok) {
                 return response.json();
             }
+            else {
+                return {};
+            }
         })
-        .then(function (value) {
-            return new FilmDiv(parent, value);
+        .then(function (json) {
+            if (Object.keys(json).length !== 0) {
+                removeAllChildren(parent);
+                return new FilmDiv(parent, json);
+            }
+            else {
+                return null;
+            }
         })
         .catch(function (error) {
             console.log(error);
-            // return new FilmDiv(parent, {});
         });
 }
 
-
-window.onload = function() {
-    let filmDiv = getFilmJson(2101);
+function searchFilm() {
+    let filmId = document.getElementById("id-field").value;
+    if (filmId !== "") {
+        updateFilmDiv(filmId);
+    }
 }
