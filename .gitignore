@@ -1,0 +1,11 @@
+# IDE settings
+.vim
+.idea
+.eclipse
+.atom
+.vscode
+
+# Security keys
+*.pk
+*.pem
+*.pub
