@@ -9,3 +9,7 @@
 *.pk
 *.pem
 *.pub
+
+# node
+node*/
+package-lock.json
