@@ -1,6 +1,13 @@
 /* Constants */
 const apiUrl = "http://localhost:8000/api/v1/"
 
+function showFilms() {
+    let container = document.getElementById("main-container");
+    create()
+}
+
+window.onload(showFilms());
+
 /* Classes */
 class FilmDiv {
     constructor(parent, object) {
