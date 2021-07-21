@@ -1,0 +1,68 @@
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #922B2B;
+    color: white;
+}
+
+#main-container {
+    background-color: #444141;
+    color: white;
+}
+
+.modal-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+.modal {
+    margin: 5%;
+    height: 80%;
+    background-color: #444141;
+    color: white;
+    border-radius: 5px;
+    border-width: 7px;
+    border-color: lightgrey;
+    border-style: ridge;
+}
+
+.modal > p.cross {
+    position: relative;
+    float: right;
+    margin-right: 20px;
+    padding: 5px 10px 10px 10px;
+    border: lightgrey 3px solid;
+    border-radius: 30px;
+}
+
+.modal > p.cross:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.modal > .modal-left-div {
+    float: left;
+    padding: 30px;
+}
+
+.modal > .modal-right-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal > .modal-right-div > div {
+    display: flex;
+    flex-direction: row;
+}
+
+.modal > .modal-right-div > div > * {
+    padding: 10px;
+}
