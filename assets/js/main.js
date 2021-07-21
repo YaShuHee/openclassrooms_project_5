@@ -3,17 +3,20 @@ const apiUrl = "http://localhost:8000/api/v1/";
 const numberOfElementsToDisplay = 10;
 const genresToDisplay = {
     "Meilleurs films" : "",
-    "Aventure": "Adventure"
+    "Aventure": "Adventure",
+    "Animation": "Animation",
+    "Action": "Action"
 };
 
 
-/* Functions */
+// FUNCTIONS
 // Utils
 function isNotEmpty(object) {
     /* Check if an object or a JSON isn't empty. */
     if (Object.keys(object).length !== 0) {return true;}
     else {return false;}
 }
+
 
 // Data extraction from API
 function fetchData(endpoint) {
@@ -31,45 +34,51 @@ function fetchData(endpoint) {
             console.log(error);
             return {};
         })
-    }
+}
 
-function extractFilmJson(filmId){
-    /* Extract and return a film JSON. */
-    endpoint = `${apiUrl}titles/${filmId}`;
+
+function fetchFilmsList(genreUrl) {
+    /* Fetch the best films from a genre. */
+    let endpoint = `${apiUrl}titles?sort_by=-imdb_score&genre=${genreUrl}`;
     return fetchData(endpoint);
 }
 
-function extractBestFilms(genreName) {
-    /* Extract and return best films from a genre.
-    If no genre is given, it returns best films all gender included. */
-    //TODO: make this function recursive to explore pages and return the good number of elements
-    endpoint = `${apiUrl}titles?sort_by=-imdb_score&genre=${genreName}`;
-    return fetchData(endpoint);
+
+function createBestFilmSection(bestFilm) {
+    /* Create the html for the best film. */
+    console.log(bestFilm);
 }
 
-function extractSortedFilms() {
-    /* Extract and return an object containing all the films data. */
-    let films = {};
-    for (const [genreName, genreNameInApi] of Object.entries(genresToDisplay)) {
-        films[genreName] = extractBestFilms(genreNameInApi);
+
+function createGenreSection(genreName, films) {
+    /* Create the html for a genre section. */
+    console.log(genreName, films);
+}
+
+
+function treatGenreSection(genreName, genreUrl) {
+    /* Treat the genre section. Use the promise to call the function that will create the html.
+    It will also shift the best film from the "best films" category and call a function to create the top section. */
+    filmsPromise = fetchFilmsList(genreUrl);
+    filmsPromise.then(function(response) {
+        films = response["results"]
+        if (genreUrl === "") {
+            let bestFilm = films.shift();
+            createBestFilmSection(bestFilm);
+        }
+        createGenreSection(genreName, films);
+    });
+}
+
+
+// Main function
+function createPageContent() {
+    /* Create the page content. It will call "treatGenreSection" function for each film genre. */
+    for (const [genreName, genreUrl] of Object.entries(genresToDisplay)) {
+        treatGenreSection(genreName, genreUrl);
     }
-    return films;
 }
 
-// HTML generation from previously extracted data
-function generateGenreSection(genreName, films) {
-    console.log(genreName, films)
-}
 
-function generateMainContainerContent() {
-    let sortedFilms = extractSortedFilms();
-    for (const [genre, films] of Object.entries(sortedFilms)) {
-        generateGenreSection(genre, films);
-    }
-}
-
-/* Execution */
-window.onload = function () {
-    films = extractSortedFilms();
-    console.log(films);
-};
+// EXECUTION
+window.onload = createPageContent();
