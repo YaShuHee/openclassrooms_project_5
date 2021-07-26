@@ -1,6 +1,6 @@
 /* Constants */
 const apiUrl = "http://localhost:8000/api/v1/";
-const numberOfElementsToDisplay = 10;
+const numberOfFilmsByGenre = 20;
 const genresToDisplay = {
     "Meilleurs films" : "",
     "Aventure": "Adventure",
@@ -116,10 +116,18 @@ function fetchData(endpoint) {
 }
 
 
-function fetchFilmsList(genreUrl) {
+function fetchFilmsList(endpoint, size, films=[]) {
     /* Fetch the best films from a genre. */
-    let endpoint = `${apiUrl}titles?sort_by=-imdb_score&genre=${genreUrl}`;
-    return fetchData(endpoint);
+    return fetchData(endpoint).then(function(response) {
+        films = films.concat(response["results"]);
+        if (films.length < size) {
+            return fetchFilmsList(response["next"], size, films);
+        } else if (films.length > size) {
+            return films.slice(0, size);
+        } else {
+            return films;
+        }
+    });
 }
 
 
@@ -203,15 +211,19 @@ function createGenreSection(genreName, films) {
 function treatGenreSection(genreName, genreUrl) {
     /* Treat the genre section. Use the promise to call the function that will create the html.
     It will also shift the best film from the "best films" category and call a function to create the top section. */
-    filmsPromise = fetchFilmsList(genreUrl);
-    filmsPromise.then(function(response) {
-        films = response["results"]
-        if (genreUrl === "") {
-            let bestFilm = films.shift();
-            createBestFilmSection(bestFilm);
-        }
-        createGenreSection(genreName, films);
-    });
+    size = numberOfFilmsByGenre;
+    if (genreUrl === "") {
+        size++;
+    }
+    endpoint = `${apiUrl}titles?genre=${genreUrl}&sort_by=-imdb_score`;
+    fetchFilmsList(endpoint, size)
+        .then(function(films) {
+            if (genreUrl === "") {
+                let bestFilm = films.shift();
+                createBestFilmSection(bestFilm);
+            }
+            createGenreSection(genreName, films)
+        });
 }
 
 
