@@ -1,6 +1,7 @@
 /* Constants */
 const apiUrl = "http://localhost:8000/api/v1/";
 const numberOfFilmsByGenre = 20;
+const visibleSlides = 7;
 const genresToDisplay = {
     "best-films" : "",
     "adventure": "Adventure",
@@ -11,10 +12,67 @@ const genresToDisplay = {
 const mainContainer = document.getElementById("main-container");
 
 
+
+// CLASSES
+class Carrousel {
+    /**
+     *
+     * @param {HTMLElement} div
+     */
+    constructor(div) {
+        this.root = div;
+        let children = [].slice.call(this.root.children);
+        this.container = document.createElement("div");
+        this.container.className = "container";
+        this.root.appendChild(this.container);
+        for (const child of children) {
+            this.container.appendChild(child);
+        }
+        this.createNavigation();
+    }
+
+    createNavigation() {
+        this.previous = document.createElement("div");
+        this.next = document.createElement("div");
+        this.previous.className = "scroll-button";
+        this.next.className = "scroll-button";
+        this.root.prepend(this.previous);
+        this.root.appendChild(this.next);
+        this.previous.addEventListener("click", () => {this.onPrevious();});
+        this.next.addEventListener("click", () => {this.onNext();});
+    }
+
+    onPrevious() {
+        this.container.prepend(this.container.lastChild);
+    }
+
+    onNext() {
+        this.container.appendChild(this.container.firstChild);
+    }
+
+    goToItem(number, animation=true) {
+        this.activeItem = number;
+        if (animation === false) {
+            this.container.style.transition = "none";
+        }
+        this.updateView();
+        if (animation === false) {
+            this.container.style.transition = "";
+        }
+    }
+
+    updateView() {
+        console.log(this.activeItem);
+        this.container.style.transform = "translateX(" + 14.29 * this.activeItem + "%)";
+    }
+}
+
+
 // FUNCTIONS
 // Utils
 function isNotEmpty(object) {
-    /* Check if an object or a JSON isn't empty. */
+    /**
+     *  Check if an object or a JSON isn't empty. */
     if (Object.keys(object).length !== 0) {return true;}
     else {return false;}
 }
@@ -22,7 +80,8 @@ function isNotEmpty(object) {
 
 // Html tag creation
 function createHtmlTag(parent, tagType, classes="", id="") {
-    /* Create an html tag. */
+    /**
+     *  Create an html tag. */
     let tag = document.createElement(tagType);
     if (classes !== "") {
         tag.classList.add(classes);
@@ -36,21 +95,24 @@ function createHtmlTag(parent, tagType, classes="", id="") {
 
 
 function createDivTag(parent, classes="", id="") {
-    /* Create a div html tag. */
+    /**
+     *  Create a div html tag. */
     let div = createHtmlTag(parent, "div", classes, id);
     return div;
 }
 
 
 function createSectionTag(parent, classes="", id="") {
-    /* Create a section html tag. */
+    /**
+     *  Create a section html tag. */
     let section = createHtmlTag(parent, "section", classes, id);
     return section;
 }
 
 
 function createPTag(parent, content, classes="", id="") {
-    /* Create a p html tag. */
+    /**
+     *  Create a p html tag. */
     let p = createHtmlTag(parent, "p", classes, id);
     p.textContent = content;
     return p;
@@ -58,7 +120,8 @@ function createPTag(parent, content, classes="", id="") {
 
 
 function createH1Tag(parent, content, classes="", id="") {
-    /* Create an h1 html tag. */
+    /**
+     *  Create an h1 html tag. */
     let h1 = createHtmlTag(parent, "h1", classes, id);
     h1.textContent = content;
     return h1;
@@ -66,7 +129,8 @@ function createH1Tag(parent, content, classes="", id="") {
 
 
 function createH2Tag(parent, content, classes="", id="") {
-    /* Create an h2 html tag. */
+    /**
+     *  Create an h2 html tag. */
     let h2 = createHtmlTag(parent, "h2", classes, id);
     h2.textContent = content;
     return h2;
@@ -74,7 +138,8 @@ function createH2Tag(parent, content, classes="", id="") {
 
 
 function createH3Tag(parent, content, classes="", id="") {
-    /* Create an h3 html tag. */
+    /**
+     *  Create an h3 html tag. */
     let h3 = createHtmlTag(parent, "h3", classes, id);
     h3.textContent = content;
     return h3;
@@ -82,7 +147,8 @@ function createH3Tag(parent, content, classes="", id="") {
 
 
 function createH4Tag(parent, content, classes="", id="") {
-    /* Create an h4 html tag. */
+    /**
+     *  Create an h4 html tag. */
     let h4 = createHtmlTag(parent, "h4", classes, id);
     h4.textContent = content;
     return h4;
@@ -90,7 +156,8 @@ function createH4Tag(parent, content, classes="", id="") {
 
 
 function createImgTag(parent, src, classes="", id="") {
-    /* Create an img html tag. */
+    /**
+     *  Create an img html tag. */
     let img = createHtmlTag(parent, "img", classes, id);
     img.src = src;
     return img;
@@ -99,7 +166,8 @@ function createImgTag(parent, src, classes="", id="") {
 
 // Data extraction from API
 function fetchData(endpoint) {
-    /* Fetch and return data from an endpoint. */
+    /**
+     *  Fetch and return data from an endpoint. */
     return fetch(endpoint)
         .then(function (response) {
             if (response.ok) {return response.json();}
@@ -117,7 +185,8 @@ function fetchData(endpoint) {
 
 
 function fetchFilmsList(endpoint, size, films=[]) {
-    /* Fetch the best films from a genre. */
+    /**
+     *  Fetch the best films from a genre. */
     return fetchData(endpoint).then(function(response) {
         films = films.concat(response["results"]);
         if (films.length < size) {
@@ -132,14 +201,16 @@ function fetchFilmsList(endpoint, size, films=[]) {
 
 
 function fetchFilmInfos(filmId) {
-    /* Fetch a film informations. */
+    /**
+     *  Fetch a film informations. */
     let endpoint = `${apiUrl}titles/${filmId}`;
     return fetchData(endpoint);
 }
 
 
 function destroyFilmModal() {
-    /* Destroy a film modal. */
+    /**
+     *  Destroy a film modal. */
     document.getElementsByClassName("modal-layer")[0].remove();
 }
 
@@ -160,7 +231,8 @@ function createModalMultiField(parent, name, list, classes="", id="") {
 
 
 function createFilmModal(filmId) {
-    /* Create the html for a film modal. */
+    /**
+     *  Create the html for a film modal. */
     filmPromise = fetchFilmInfos(filmId);
     // create and add the modal layer to DOM
     let modalLayer = createDivTag(mainContainer, classes="modal-layer");
@@ -186,28 +258,42 @@ function createFilmModal(filmId) {
 
 
 function fillBestFilmSection(bestFilm) {
-    /* Fill the html for the best film. */
+    /**
+     * Fill the html for the best film. */
     console.log(bestFilm);
+    let left = document.getElementsByClassName("best-film__left")[0];
+    let right = document.getElementsByClassName("best-film__right")[0];
+    console.log(left, right);
+    // left
+    let img = createImgTag(left, bestFilm["image_url"]);
+    // right
+    let title = createH2Tag(right, bestFilm["title"]);
+    let button = createPTag(right, "Plus d'informations", classes="info-button");
+    let resume = createPTag(right, bestFilm["long_description"]);
+    button.addEventListener("click", () => {createFilmModal(bestFilm["id"]);});
 }
 
 
 function fillGenreSection(genreId, films) {
-    /* Fill the html for a genre section. */
+    /**
+     *  Fill the html for a genre section. */
     // get the section
-    let section = document.getElementById(genreId);
+    let div = document.querySelector("#"+genreId+">div.carrousel");
     // create and bind img
     for (const film of films) {
-        createImgTag(section, film["image_url"])
+        createImgTag(div, film["image_url"])
             .addEventListener("click", function(event) {
                 console.log(film["id"], film);
                 createFilmModal(film["id"]);
             });
     }
+    new Carrousel(div);
 }
 
 
 function treatGenreSection(genreId, genreUrl) {
-    /* Treat the genre section. Use the promise to call the function that will create the html.
+    /**
+     *  Treat the genre section. Use the promise to call the function that will create the html.
     It will also shift the best film from the "best films" category and call a function to create the top section. */
     size = numberOfFilmsByGenre;
     if (genreUrl === "") {
@@ -220,14 +306,15 @@ function treatGenreSection(genreId, genreUrl) {
                 let bestFilm = films.shift();
                 fillBestFilmSection(bestFilm);
             }
-            fillGenreSection(genreId, films)
+            fillGenreSection(genreId, films);
         });
 }
 
 
 // Main function
 function createPageContent() {
-    /* Create the page content. It will call "treatGenreSection" function for each film genre. */
+    /**
+     *  Create the page content. It will call "treatGenreSection" function for each film genre. */
     for (const [genreId, genreUrl] of Object.entries(genresToDisplay)) {
         treatGenreSection(genreId, genreUrl);
     }

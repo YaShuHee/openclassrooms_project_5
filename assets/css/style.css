@@ -1,16 +1,59 @@
-html, body{
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+  html, body{
     margin: 0;
     padding: 0;
+    font-family: 'Roboto', sans-serif;
 }
 
 header {
     background-color: #922B2B;
     color: white;
+    padding: 50px;
+    font-size: 2rem;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+}
+
+header>nav>ul {
+    padding: 50px 0px 20px 0px;
+
+}
+
+header>nav>ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1.5rem;
+}
+
+header>nav>ul>li {
+    float: left;
+    margin-right: 50px;
 }
 
 #main-container {
     background-color: #444141;
     color: white;
+}
+
+.best-film__right>.info-button {
+    background-color: rgba(146, 43, 43, 0.6);
+    border-radius: 10px;
+    width: 170px;
+}
+
+.best-film__right>.info-button:hover {
+    background-color: rgba(146, 43, 43, 1);
+}
+
+#main-container>section {
+    padding: 50px;
+}
+
+#main-container>section>h2 {
+    margin-bottom: 20px;
 }
 
 .modal-layer {
@@ -53,16 +96,60 @@ header {
     padding: 30px;
 }
 
+.modal > .modal-left-div>h3 {
+    padding: 20px;
+}
+
 .modal > .modal-right-div {
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .modal > .modal-right-div > div {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .modal > .modal-right-div > div > * {
     padding: 10px;
+}
+
+.modal > .modal-right-div > div > h4 {
+    line-height: 3;
+}
+
+.modal > .modal-right-div > div > p {
+    background-color: rgba(100, 100, 100, 0.5);
+    border-radius: 10px;
+    margin-left: 20px;
+}
+
+.carrousel>.scroll-button, .container {
+    float: left;
+}
+
+.container {
+    width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.container>* {
+    display: inline-block;
+    width: 14.29%;
+    white-space: normal;
+}
+
+.scroll-button {
+    background-color: rgba(146, 43, 43, 0.6);
+    border-radius: 5px;
+    width: 5%;
+    height: 340px;
+}
+.scroll-button:hover {
+    cursor: pointer;
+    background-color: rgba(146, 43, 43, 1);
+    transition: background-color 0.3s;
 }
