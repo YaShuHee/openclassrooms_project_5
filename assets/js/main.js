@@ -2,10 +2,10 @@
 const apiUrl = "http://localhost:8000/api/v1/";
 const numberOfFilmsByGenre = 20;
 const genresToDisplay = {
-    "Meilleurs films" : "",
-    "Aventure": "Adventure",
-    "Animation": "Animation",
-    "Action": "Action"
+    "best-films" : "",
+    "adventure": "Adventure",
+    "animation": "Animation",
+    "action": "Action"
 };
 // /!\ Because of this next line, this script needs to be loaded at the end of html loading. /!\
 const mainContainer = document.getElementById("main-container");
@@ -185,18 +185,16 @@ function createFilmModal(filmId) {
 }
 
 
-function createBestFilmSection(bestFilm) {
-    /* Create the html for the best film. */
+function fillBestFilmSection(bestFilm) {
+    /* Fill the html for the best film. */
     console.log(bestFilm);
 }
 
 
-function createGenreSection(genreName, films) {
-    /* Create the html for a genre section. */
-    // create section
-    let section = createSectionTag(mainContainer);
-    // create h2 tag
-    createH2Tag(section, genreName);
+function fillGenreSection(genreId, films) {
+    /* Fill the html for a genre section. */
+    // get the section
+    let section = document.getElementById(genreId);
     // create and bind img
     for (const film of films) {
         createImgTag(section, film["image_url"])
@@ -208,7 +206,7 @@ function createGenreSection(genreName, films) {
 }
 
 
-function treatGenreSection(genreName, genreUrl) {
+function treatGenreSection(genreId, genreUrl) {
     /* Treat the genre section. Use the promise to call the function that will create the html.
     It will also shift the best film from the "best films" category and call a function to create the top section. */
     size = numberOfFilmsByGenre;
@@ -220,9 +218,9 @@ function treatGenreSection(genreName, genreUrl) {
         .then(function(films) {
             if (genreUrl === "") {
                 let bestFilm = films.shift();
-                createBestFilmSection(bestFilm);
+                fillBestFilmSection(bestFilm);
             }
-            createGenreSection(genreName, films)
+            fillGenreSection(genreId, films)
         });
 }
 
@@ -230,8 +228,8 @@ function treatGenreSection(genreName, genreUrl) {
 // Main function
 function createPageContent() {
     /* Create the page content. It will call "treatGenreSection" function for each film genre. */
-    for (const [genreName, genreUrl] of Object.entries(genresToDisplay)) {
-        treatGenreSection(genreName, genreUrl);
+    for (const [genreId, genreUrl] of Object.entries(genresToDisplay)) {
+        treatGenreSection(genreId, genreUrl);
     }
 }
 
