@@ -43,11 +43,21 @@ class Carrousel {
     }
 
     onPrevious() {
+        this.container.style.transition = "none";
+        this.container.style.transform = "translate3d(-14.29%, 0, 0)";
         this.container.prepend(this.container.lastChild);
+        this.container.offsetHeight; // force repaint
+        this.container.style.transition = "";
+        this.container.style.transform = "translate3d(0, 0, 0)";
     }
 
     onNext() {
+        this.container.style.transition = "none";
+        this.container.style.transform = "translate3d(14.29%, 0, 0)";
         this.container.appendChild(this.container.firstChild);
+        this.container.offsetHeight; // force repaint
+        this.container.style.transition = "";
+        this.container.style.transform = "translate3d(0, 0, 0)";
     }
 
     goToItem(number, animation=true) {

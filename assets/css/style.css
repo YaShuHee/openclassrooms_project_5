@@ -134,6 +134,7 @@ header>nav>ul>li {
     width: 90%;
     overflow: hidden;
     white-space: nowrap;
+    transition: transform 0.3s;
 }
 
 .container>* {
