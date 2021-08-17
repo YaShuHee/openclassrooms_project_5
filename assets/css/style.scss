@@ -1,0 +1,274 @@
+@use "sass:math";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+
+
+//* sass variables */
+
+$main_color: #922B2B;
+$secondary_color: #444141;
+$carrousel_visible_image: 7;
+$carrousel_image_width: math.div(100%, $carrousel_visible_image);
+$carrousel_image_ratio: math.div($carrousel_image_width * 268px, 182px);
+$carrousel_height: 268px * (1 + math.div($carrousel_image_ratio, 100%));
+
+
+
+//* sass mixins */
+
+@mixin no-margin-padding {
+  padding: 0;
+  margin: 0;
+}
+
+@mixin fill-height {
+  height: 100%;
+}
+
+@mixin fill-width {
+  width: 100%;
+}
+
+@mixin roboto {
+  font-family: "Roboto";
+  color: #ffffff;
+}
+
+@mixin main_title {
+  font-size: 4rem;
+}
+
+@mixin little_title {
+  font-size: 2rem;
+}
+
+
+
+/* html tags */
+
+html, body {
+  @include no-margin-padding;
+  @include roboto;
+  background-color: $secondary_color;
+}
+
+
+
+/* header */
+
+header {
+  background-color: $main_color;
+
+  & > h1 {
+    margin: 0;
+    padding: 4% 5% 2% 5%;
+    @include main_title;
+  }
+  & > nav > ul {
+    list-style: none;
+    margin: 0;
+    padding: 2% 5% 3% 5%;
+    & > li {
+      display: inline-block;
+      padding-left: 0;
+      margin-right: 20%;
+      @include little_title;
+    }
+  }
+}
+
+
+
+/* main container */
+
+#main-container {
+  padding-bottom: 100px;
+
+  #best-film {
+
+    & > div {
+      margin: 0 5%;
+      display: inline-block;
+    }
+
+    & > .best-film__left {
+
+      & > img {
+        height: 400px;
+      }
+    }
+
+    & > .best-film__right {
+      width: 60%;
+
+      & > .best-film__right__title {
+        @include main_title;
+      }
+
+      & > .best-film__right__info-button {
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+        background-color: black;
+      }
+
+      & > .best-film__right__info-button:hover {
+        background-color: white;
+        transition: background-color 0.3s;
+      }
+
+      & > .best-film__right__film-resume {
+        @include little_title;
+        width: 100%;
+      }
+    }
+  }
+
+  .film-section {
+    padding-bottom: 2%;
+
+    & > .film-section__title {
+      margin: 10% 0 2% 5%;
+      @include little_title;
+    }
+  }
+}
+
+
+
+/* carrousel */
+
+.carrousel {
+  width: 90%;
+  margin: auto;
+  height: $carrousel_height;
+
+  & > .carrousel__scroll-button {
+    @include fill-height;
+    display: inline-block;
+    width: 5%;
+    color: white;
+  }
+
+  & > .carrousel__scroll-button:hover {
+    cursor: pointer;
+    background-color: $main_color;
+    transition: background-color 0.3s;
+    color: transparentize(white, 0.3);
+  }
+
+  $button_border_radius: 20px;
+  & > .carrousel__previous-button {
+    border-bottom-left-radius: $button_border_radius;
+    border-top-left-radius: $button_border_radius;
+    background: transparentize($main_color, 0.3) url(../svg/left-arrow.svg) no-repeat no-repeat center;
+  }
+
+  & > .carrousel__next-button {
+    border-bottom-right-radius: $button_border_radius;
+    border-top-right-radius: $button_border_radius;
+    background: transparentize($main_color, 0.3) url(../svg/right-arrow.svg) no-repeat no-repeat center;
+  }
+
+  & > .carrousel__frame {
+    @include fill-height;
+    display: inline-block;
+    width: 90%;
+    overflow: hidden;
+
+    & > .carrousel__container {
+      @include fill-height;
+      @include fill-width;
+      white-space: nowrap;
+      transition: transform 0.4s;
+
+      & > img {
+        @include fill-height;
+        width: $carrousel_image_width;
+        display: inline-block;
+        white-space: normal;
+      }
+    }
+  }
+}
+
+
+
+/* modals */
+
+.modal-layer {
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+
+  & > .modal {
+    width: 80%;
+    height: 80%;
+    position: relative;
+    top: 10%;
+    left: 10%;
+    border-radius: 5px;
+    border-width: 7px;
+    border-color: lightgrey;
+    border-style: ridge;
+    background-color: $main_color;
+
+    & > .modal__cross {
+      position: relative;
+      float: right;
+      margin-right: 20px;
+      padding: 5px 10px 10px 10px;
+      border: lightgrey 3px solid;
+      border-radius: 30px;
+    }
+
+    & > .modal__cross:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    & > .modal__left-div {
+      float: left;
+      position: relative;
+      top: 50px;
+      left: 50px;
+    }
+
+    & > .modal__right-div {
+      padding-left: 100px;
+      display: flex;
+      flex-direction: column;
+      @include fill-height;
+
+      & > div {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: baseline;
+
+        & > p {
+          background-color: $secondary_color;
+          border-radius: 10px;
+          margin-left: 20px;
+          padding: 5px;
+        }
+
+        & > p:hover {
+          background-color: transparentize($secondary_color, 0.4);
+          transition: background-color 0.3s;
+        }
+      }
+
+      & > div:last-child {
+        flex-wrap: nowrap;
+      }
+    }
+  }
+}

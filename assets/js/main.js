@@ -22,9 +22,15 @@ class Carrousel {
     constructor(div) {
         this.root = div;
         let children = [].slice.call(this.root.children);
+        // create the frame (overflow: hidden)
+        this.frame = document.createElement("div");
+        this.frame.className = "carrousel__frame";
+        this.root.appendChild(this.frame);
+        // create the items container (translateX)
         this.container = document.createElement("div");
-        this.container.className = "container";
-        this.root.appendChild(this.container);
+        this.container.className = "carrousel__container";
+        this.frame.appendChild(this.container);
+        // fill the container with items
         for (const child of children) {
             this.container.appendChild(child);
         }
@@ -34,8 +40,8 @@ class Carrousel {
     createNavigation() {
         this.previous = document.createElement("div");
         this.next = document.createElement("div");
-        this.previous.className = "scroll-button";
-        this.next.className = "scroll-button";
+        this.previous.className = "carrousel__scroll-button carrousel__previous-button";
+        this.next.className = "carrousel__scroll-button carrousel__next-button";
         this.root.prepend(this.previous);
         this.root.appendChild(this.next);
         this.previous.addEventListener("click", () => {this.onPrevious();});
@@ -52,12 +58,13 @@ class Carrousel {
     }
 
     onNext() {
-        this.container.style.transition = "none";
-        this.container.style.transform = "translate3d(14.29%, 0, 0)";
-        this.container.appendChild(this.container.firstChild);
-        this.container.offsetHeight; // force repaint
         this.container.style.transition = "";
-        this.container.style.transform = "translate3d(0, 0, 0)";
+        this.container.style.transform = "translate3d(-14.29%, 0, 0)";
+        this.event = this.container.addEventListener("transitionend", () => {
+            this.container.appendChild(this.container.firstChild);
+            this.container.style.transition = "none";
+            this.container.style.transform = "translate3d(0, 0, 0)";
+        }, {once: true})
     }
 
     goToItem(number, animation=true) {
@@ -94,7 +101,7 @@ function createHtmlTag(parent, tagType, classes="", id="") {
      *  Create an html tag. */
     let tag = document.createElement(tagType);
     if (classes !== "") {
-        tag.classList.add(classes);
+        tag.className = classes;
     }
     if (id !== "") {
         tag.id = id;
@@ -247,10 +254,10 @@ function createFilmModal(filmId) {
     // create and add the modal layer to DOM
     let modalLayer = createDivTag(mainContainer, classes="modal-layer");
     let modal = createDivTag(modalLayer, classes="modal");
-    let cross = createPTag(modal, "🗙", classes="cross");
+    let cross = createPTag(modal, "🗙", classes="modal__cross");
     cross.addEventListener("click", function () {destroyFilmModal();});
-    let leftContainer = createDivTag(modal, "modal-left-div");
-    let rightContainer = createDivTag(modal, "modal-right-div");
+    let leftContainer = createDivTag(modal, "modal__left-div");
+    let rightContainer = createDivTag(modal, "modal__right-div");
     // create the modal content
     filmPromise.then(function (film) {
         createImgTag(leftContainer, film["image_url"]);
@@ -273,13 +280,17 @@ function fillBestFilmSection(bestFilm) {
     console.log(bestFilm);
     let left = document.getElementsByClassName("best-film__left")[0];
     let right = document.getElementsByClassName("best-film__right")[0];
-    console.log(left, right);
     // left
     let img = createImgTag(left, bestFilm["image_url"]);
     // right
-    let title = createH2Tag(right, bestFilm["title"]);
-    let button = createPTag(right, "Plus d'informations", classes="info-button");
-    let resume = createPTag(right, bestFilm["long_description"]);
+    let title = createH2Tag(right, bestFilm["title"], classes="best-film__right__title");
+    let button = createImgTag(right, "assets/svg/info.svg", classes="best-film__right__info-button");
+    // fetch resume
+    filmPromise = fetchFilmInfos(bestFilm["id"]);
+    filmPromise.then(function (film) {
+        console.log(film);
+        createPTag(right, film["long_description"], classes="best-film__right__film-resume");
+    });
     button.addEventListener("click", () => {createFilmModal(bestFilm["id"]);});
 }
 
